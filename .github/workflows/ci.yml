@@ -11,15 +11,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Clone Website
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Instalar Clonador
+        run: pip install pywebcopy
+
+      - name: Clonar Sitio Web
         run: |
-          # Usamos la URL que necesitas clonar
-          export URL="https://web.archive.org/web/20250329232311/https://cabanaslosolivos.com.ar/"
-          # Este comando es el que suele usar esta plantilla para descargar
-          npx website-cloner $URL --output website-content
-          
-      - name: Upload Files
+          python -c "
+          from pywebcopy import save_webpage
+          url = 'https://web.archive.org/web/20250329232311/https://cabanaslosolivos.com.ar/'
+          download_folder = './website-content/'
+          kwargs = {'project_name': 'clon_olivos'}
+          save_webpage(url, download_folder, **kwargs)
+          "
+
+      - name: Subir Archivos
         uses: actions/upload-artifact@v3
         with:
-          name: website-content
-          path: website-content/
+          name: sitio-clonado
+          path: website-content/clon_olivos/
