@@ -1,12 +1,12 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+workflow_dispatch:
+    inputs:
+      website_url:
+        description: 'URL del sitio a clonar'
+        required: true
+        default: 'https://web.archive.org/web/20250329232311/https://cabanaslosolivos.com.ar/'
 
 jobs:
   quality:
