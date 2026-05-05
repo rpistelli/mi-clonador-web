@@ -1,36 +1,25 @@
 name: CI
-
 on:
-workflow_dispatch:
-    inputs:
-      website_url:
-        description: 'URL del sitio a clonar'
-        required: true
-        default: 'https://web.archive.org/web/20250329232311/https://cabanaslosolivos.com.ar/'
+  push:
+    branches: [ master ]
+  workflow_dispatch:
 
 jobs:
-  quality:
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Clone Website
+        run: |
+          # Usamos la URL que necesitas clonar
+          export URL="https://web.archive.org/web/20250329232311/https://cabanaslosolivos.com.ar/"
+          # Este comando es el que suele usar esta plantilla para descargar
+          npx website-cloner $URL --output website-content
+          
+      - name: Upload Files
+        uses: actions/upload-artifact@v3
         with:
-          node-version: 24
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Type check
-        run: npm run typecheck
-
-      - name: Build
-        run: npm run build
+          name: website-content
+          path: website-content/
